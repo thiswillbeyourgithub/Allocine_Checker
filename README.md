@@ -6,7 +6,7 @@ Very simple python program to check if a movie is currently in theaters around y
 * create a file `urls.py` that contains a python dictionary like so:
 ```
 urls = {
- "Toni en Famille": "https://www.allocine.fr/film/fichefilm_gen_cfilm=305325.html"
+ "Stalker": "https://www.allocine.fr/film/fichefilm_gen_cfilm=702.html",
  }
 ```
 * launch the script with `python allocine_checker.py`
