@@ -17,7 +17,6 @@ def notifier(message, notif_url):
 
 
 def main(
-        send_notification=True,
         notif_url=None,
         ):
     "simple loop that checks if tickets are available for each movie"
@@ -54,8 +53,7 @@ def main(
         # or the page is displaying the tickets
         else:
             print(f"Tickets available for {name}")
-            if send_notification:
-                assert notif_url is not None, "you have to supply a notif_url if you set send_notification to True"
+            if notif_url is not None:
                 notifier(
                         message=f"Tickets available for {name}",
                         notif_url=notif_url
