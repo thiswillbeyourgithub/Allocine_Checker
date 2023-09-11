@@ -18,11 +18,17 @@ def notifier(message, notif_url):
 
 def main(
         notif_url=None,
+        verbose=False,
         ):
     "simple loop that checks if tickets are available for each movie"
 
+    if verbose:
+        pr = print
+    else:
+        pr = lambda x: None
+
     for name, url in urls.items():
-        print(f"Name: '{name}'")
+        pr(f"Name: '{name}'")
 
         # get the film id
         film_id = re.findall("https://www.allocine.fr/film/fichefilm_gen_cfilm=(\d+).html", url)
@@ -42,17 +48,17 @@ def main(
         # load the ticket page
         g = Goose()
         article = g.extract(tickets_url)
-        print(f"Title: {article.title}")
+        pr(f"Title: {article.title}")
         text = article.cleaned_text
         #raw = article.raw_html
 
         # either the page loaded silently again to the initial page
         if orig_text.strip() == text.strip():
-            print(f"No tickets available for {name}")
+            pr(f"No tickets available for {name}")
 
         # or the page is displaying the tickets
         else:
-            print(f"Tickets available for {name}")
+            pr(f"Tickets available for {name}")
             if notif_url is not None:
                 notifier(
                         message=f"Tickets available for {name}",
