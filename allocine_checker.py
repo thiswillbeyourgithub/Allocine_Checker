@@ -67,16 +67,16 @@ def main(
         time.sleep(0.1)
 
     pr("\nSummary:")
-    pr("NOT available: " + '\n *  '.join(noavail) + "\n")
-    pr("Available: " + '\n *  '.join(avail) + "\n")
-    pr("Errors: " + "\n*  ".join(errors) + "\n")
-
+    pr("NOT available:\n *  " + '\n *  '.join(noavail) + "\n")
+    pr("Available:\n *  " + '\n *  '.join(avail) + "\n")
+    pr("Errors:\n *  " + "\n*  ".join(errors) + "\n")
 
     if notif_url is not None:
         notifier(
                 message=output,
                 notif_url=notif_url
                 )
+
 
 if __name__ == "__main__":
     fire.Fire(main)
