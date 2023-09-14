@@ -53,7 +53,7 @@ def main(
         soup = BeautifulSoup(page.content, "html.parser")
 
         # check if contains the city name greyed out or not
-        if not soup.find("a", {"title": city, "class": "disabled"}):
+        if "synopsis" not in str(page.content) and not soup.find("span", {"title": city, "class": "disabled"}):
             pr(f"Tickets available in {city} for '{name}'\n")
             avail.append(name)
         else:
