@@ -1,6 +1,6 @@
+from bs4 import BeautifulSoup
 import time
 import re
-from goose3 import Goose
 import requests
 import fire
 
@@ -17,6 +17,7 @@ def notifier(message, notif_url):
 
 
 def main(
+        city="Paris",
         notif_url=None,
         verbose=False,
         ):
@@ -24,6 +25,8 @@ def main(
 
     avail = []
     noavail = []
+    errors = []
+
     output = ""
     if verbose:
         pr = print
@@ -42,38 +45,31 @@ def main(
         film_id = int(film_id[0])
         assert isinstance(film_id, int), f"invalid type: {film_id}"
 
-        # look for tickets close to Paris
-        tickets_url = f"https://www.allocine.fr/seance/film-{film_id}/pres-de-115755/"
-
-        # load the original page
-        g = Goose()
-        orig_article = g.extract(url)
-        orig_text = orig_article.cleaned_text
-        #orig_raw = orig_article.raw_html
+        # look for tickets
+        tickets_url = f"https://www.allocine.fr/seance/film-{film_id}"
 
         # load the ticket page
-        g = Goose()
-        article = g.extract(tickets_url)
-        #pr(f"Title: {article.title}")
-        text = article.cleaned_text
-        #raw = article.raw_html
+        page = requests.get(tickets_url)
+        soup = BeautifulSoup(page.content, "html.parser")
 
-        # either the page loaded silently again to the initial page
-        if orig_text.strip() == text.strip():
+        # check if contains the city name greyed out or not
+        if not soup.find("a", {"title": city, "class": "disabled"}):
+            pr(f"Tickets available in {city} for '{name}'\n")
+            avail.append(name)
+        else:
             pr(f"No tickets available for {name}\n")
+            if not soup.find("span", {"title": city, "class": "disabled"}):
+                pr(f"Probable error when loading ticket page for {name}")
+                errors.append(name)
             noavail.append(name)
 
-        # or the page is displaying the tickets
-        else:
-            pr(f"Tickets available in Paris for {name}\n")
-            avail.append(name)
-
         # reduce load to avoid bot detection
-        time.sleep(1)
+        time.sleep(0.1)
 
-    pr(f"\nRecap:")
-    pr("NOT available: " + ', '.join(noavail) + "\n")
-    pr("Available: " + ', '.join(avail) + "\n")
+    pr("\nSummary:")
+    pr("NOT available: " + '\n *  '.join(noavail) + "\n")
+    pr("Available: " + '\n *  '.join(avail) + "\n")
+    pr("Errors: " + "\n*  ".join(errors) + "\n")
 
 
     if notif_url is not None:
