@@ -22,10 +22,16 @@ def main(
         ):
     "simple loop that checks if tickets are available for each movie"
 
+    avail = []
+    noavail = []
+    output = ""
     if verbose:
         pr = print
     else:
-        pr = lambda x: None
+        def pr(line):
+            nonlocal output
+            output += "\n" + line
+            print(line)
 
     for name, url in urls.items():
         pr(f"Name: '{name}'")
@@ -48,25 +54,33 @@ def main(
         # load the ticket page
         g = Goose()
         article = g.extract(tickets_url)
-        pr(f"Title: {article.title}")
+        #pr(f"Title: {article.title}")
         text = article.cleaned_text
         #raw = article.raw_html
 
         # either the page loaded silently again to the initial page
         if orig_text.strip() == text.strip():
-            pr(f"No tickets available for {name}")
+            pr(f"No tickets available for {name}\n")
+            noavail.append(name)
 
         # or the page is displaying the tickets
         else:
-            pr(f"Tickets available for {name}")
-            if notif_url is not None:
-                notifier(
-                        message=f"Tickets available for {name}",
-                        notif_url=notif_url
-                        )
+            pr(f"Tickets available in Paris for {name}\n")
+            avail.append(name)
 
         # reduce load to avoid bot detection
         time.sleep(1)
+
+    pr(f"\nRecap:")
+    pr("NOT available: " + ', '.join(noavail) + "\n")
+    pr("Available: " + ', '.join(avail) + "\n")
+
+
+    if notif_url is not None:
+        notifier(
+                message=output,
+                notif_url=notif_url
+                )
 
 if __name__ == "__main__":
     fire.Fire(main)
