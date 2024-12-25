@@ -1,6 +1,9 @@
 # Allocine Checker
 Very simple python program to check if a movie is currently in theaters around you. Especially useful for old movies.
 
+## Project Status
+🟢 Fully operational
+
 ## Usage
 * download `allocine_checker.py`
 * create a file `urls.py` that contains a python dictionary like so:
