@@ -3,8 +3,8 @@ import time
 import re
 import requests
 import fire
-
-from urls import urls
+import yaml
+from pathlib import Path
 
 def notifier(message, notif_url):
     "send a notification to my phone using ntfy"
@@ -20,9 +20,11 @@ def main(
         city="Paris",
         notif_url=None,
         verbose=False,
+        urls_file="urls.yaml",
         ):
     "simple loop that checks if tickets are available for each movie"
 
+    urls = yaml.safe_load(Path(urls_file).read_text(encoding="utf-8"))
     avail = []
     noavail = []
     errors = []
