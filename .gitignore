@@ -2,3 +2,4 @@ urls.py
 urls.yaml
 .aider*
 .env
+__pycache__
